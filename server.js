@@ -6,14 +6,14 @@ const { v4: uuidv4 } = require('uuid');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware for parsing application/x-www-form-urlencoded
+
 app.use(express.urlencoded({ extended: true }));
-// Middleware for parsing application/json
+
 app.use(express.json());
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 
-// Route to serve the notes.html file
+
 app.get('/notes', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/notes.html'));
 });
@@ -44,13 +44,9 @@ app.post('/api/notes', async (req, res) => {
 // DELETE route to delete a note
 app.delete('/api/notes/:id', async (req, res) => {
   try {
-    // Read notes from db.json
     const notes = await fs.readJson(path.join(__dirname, '/db/db.json'));
-    // Filter out the note with the id to delete
     const filteredNotes = notes.filter(note => note.id !== req.params.id);
-    // Write the filtered notes back to db.json
     await fs.writeJson(path.join(__dirname, '/db/db.json'), filteredNotes);
-    // Respond to the client
     res.json({ message: 'Note has been deleted' });
   } catch (err) {
     res.status(500).json(err);
